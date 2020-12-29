@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: clair
+  namespace: clair
+spec:
+  selector:
+    matchLabels:
+      app: clair
+  serviceName: clair
+  replicas: 3
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: clair
+    spec:
+      containers:
+      - name: clair
+        image: quay.io/coreos/clair:v2.1.6
+        args:
+        - -config
+        - /config/config.yaml
+        ports:
+        - containerPort: 6060
+        - containerPort: 6061
+        volumeMounts:
+        - mountPath: /config
+          name: secret-volume
+      volumes:
+      - name: secret-volume
+        secret:
+          secretName: clairsecret
+            # kubectl create secret generic -n clair clairsecret --from-file=./config.yaml
