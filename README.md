@@ -43,6 +43,18 @@ CREATE DATABASE
 postgres=# quit
 ```
 
+## Install the MetalLB load balancer
+
+Not needed if MetalLB is already running or if you are using Cloud-based load balancer.
+
+```bash
+cd ../metallb
+kubectl apply -f metallb-namespace.yaml
+kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
+kubectl apply -f metallb.yaml
+kubectl apply -f metallb-configmap.yaml
+```
+
 ## Stand up the Clair server
 
 ```bash
@@ -62,9 +74,9 @@ Find the Clair health port, `32006` in this case.
 
 ```console
 $ kubectl get svc -n clair
-NAME       TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)                         AGE
-postgres   NodePort   10.43.242.146   <none>        5432:31309/TCP                  6h47m
-clair      NodePort   10.43.69.151    <none>        6060:30494/TCP,6061:32006/TCP   6h45m
+NAME       TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)                         AGE
+postgres   NodePort       10.43.242.146   <none>        5432:31309/TCP                  7h30m
+clair      LoadBalancer   10.43.69.151    198.168.3.0   6060:30494/TCP,6061:32006/TCP   7h27m
 
 $ curl -X GET -I http://NODEIP:NODEPORT/health
 HTTP/1.1 200 OK

@@ -4,13 +4,15 @@ metadata:
   name: clair
   namespace: clair
   labels:
-    app: postgres
+    app: clair
 spec:
-  type: NodePort
+  type: LoadBalancer
   ports:
   - name: api
     port: 6060
+    targetPort: 6060
   - name: health
     port: 6061
+    targetPort: 6061
   selector:
     app: clair
