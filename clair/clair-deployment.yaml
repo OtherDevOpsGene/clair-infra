@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
   name: clair
   namespace: clair
@@ -7,10 +7,7 @@ spec:
   selector:
     matchLabels:
       app: clair
-  serviceName: clair
-  replicas: 1
-  updateStrategy:
-    type: RollingUpdate
+  replicas: 2
   template:
     metadata:
       labels:
