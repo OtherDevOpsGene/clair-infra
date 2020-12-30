@@ -19,16 +19,16 @@ kubectl apply -f postgres-service.yaml
 
 ## Create a database for Clair using PSQL on a Docker container
 
-Find the PostgreSQL port, `31309` in this case.
+Find the PostgreSQL port, `30856` in this case.
 
 ```console
 $ kubectl get svc -n clair
-NAME       TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)                         AGE
-postgres   NodePort   10.43.242.146   <none>        5432:31309/TCP                  6h25m
+NAME       TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
+postgres   NodePort   10.43.57.218   <none>        5432:30856/TCP   23s
 ```
 
 Replace `NODEIP` with the IP address of the k8s node, and NODEPORT with the
-service port (`31309` in our case).
+service port (`30856` in our case).
 
 ```console
 $ docker run -it --rm postgres psql -h NODEIP -p NODEPORT -U postgresadmin postgres
@@ -41,18 +41,6 @@ CREATE ROLE
 postgres=# create database clairdb with owner clairdb;
 CREATE DATABASE
 postgres=# quit
-```
-
-## Install the MetalLB load balancer
-
-Not needed if MetalLB is already running or if you are using Cloud-based load balancer.
-
-```bash
-cd ../metallb
-kubectl apply -f metallb-namespace.yaml
-kubectl create secret generic -n metallb-system memberlist --from-literal=secretkey="$(openssl rand -base64 128)"
-kubectl apply -f metallb.yaml
-kubectl apply -f metallb-configmap.yaml
 ```
 
 ## Stand up the Clair server
@@ -70,17 +58,17 @@ vulnerabilities will be incomplete.
 
 ## Test the Clair server
 
-Find the Clair health port, `32006` in this case.
+Use the external IP of the `clair` service with port `6061`.
 
 ```console
 $ kubectl get svc -n clair
-NAME       TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)                         AGE
-postgres   NodePort       10.43.242.146   <none>        5432:31309/TCP                  7h30m
-clair      LoadBalancer   10.43.69.151    198.168.3.0   6060:30494/TCP,6061:32006/TCP   7h27m
+NAME       TYPE           CLUSTER-IP      EXTERNAL-IP    PORT(S)                         AGE
+postgres   NodePort       10.43.57.218    <none>         5432:30856/TCP                  2m55s
+clair      LoadBalancer   10.43.251.106   192.168.1.30   6060:32441/TCP,6061:30561/TCP   14s
 
-$ curl -X GET -I http://NODEIP:NODEPORT/health
+$ curl -X GET -I http://192.168.1.30:6061/health
 HTTP/1.1 200 OK
 Server: clair
-Date: Wed, 30 Dec 2020 20:36:57 GMT
+Date: Wed, 30 Dec 2020 23:03:28 GMT
 Content-Length: 0
 ```
