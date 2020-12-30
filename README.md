@@ -19,16 +19,16 @@ kubectl apply -f postgres-service.yaml
 
 ## Create a database for Clair using PSQL on a Docker container
 
-Find the PostgreSQL port, `30856` in this case.
+Find the PostgreSQL port, `31867` in this case.
 
 ```console
-$ kubectl get svc -n clair
-NAME       TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
-postgres   NodePort   10.43.57.218   <none>        5432:30856/TCP   23s
+$ kkubectl get svc -n clair
+NAME       TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+postgres   NodePort   10.43.154.167   <none>        5432:31867/TCP   11s
 ```
 
 Replace `NODEIP` with the IP address of the k8s node, and NODEPORT with the
-service port (`30856` in our case).
+service port (`31867` in our case).
 
 ```console
 $ docker run -it --rm postgres psql -h NODEIP -p NODEPORT -U postgresadmin postgres
