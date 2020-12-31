@@ -38,6 +38,8 @@ Type "help" for help.
 
 postgres=# create user clairdb with password 'clair123';
 CREATE ROLE
+postgres=# grant clairdb to postgresadmin;
+GRANT ROLE
 postgres=# create database clairdb with owner clairdb;
 CREATE DATABASE
 postgres=# quit
